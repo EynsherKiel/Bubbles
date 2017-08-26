@@ -1,0 +1,109 @@
+﻿<Window
+    x:Class="Bubbles.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Bubbles.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:Bubbles.Models"
+    Title="Bubbles"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+
+    <Window.DataContext>
+        <models:BubbleFieldViewModel />
+    </Window.DataContext>
+
+    <Grid>
+
+        <ItemsControl ItemsSource="{Binding Bubbles}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas IsItemsHost="True" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="Canvas.Left" Value="0" />
+                    <Setter Property="Canvas.Top" Value="0" />
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Ellipse
+                        Canvas.Top="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentPresenter}, Path=(Canvas.Top), Mode=TwoWay}"
+                        Width="10"
+                        Height="10"
+                        Fill="#FF616AB6">
+                        <Ellipse.Resources>
+
+                            <Storyboard x:Key="yanimation">
+                                <DoubleAnimation
+                                    Storyboard.Target="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentPresenter}}"
+                                    Storyboard.TargetProperty="(Canvas.Top)"
+                                    Duration="0:0:1">
+                                    <DoubleAnimation.To>
+                                        <MultiBinding Converter="{converters:RelativityCoordinateMultiConverter}">
+                                            <Binding Path="Y" />
+                                            <Binding Path="DataContext.Height" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}" />
+                                            <Binding Path="ActualHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}" />
+                                        </MultiBinding>
+                                    </DoubleAnimation.To>
+                                </DoubleAnimation>
+                            </Storyboard>
+
+                            <Storyboard x:Key="xanimation">
+                                <DoubleAnimation
+                                    Storyboard.Target="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentPresenter}}"
+                                    Storyboard.TargetProperty="(Canvas.Left)"
+                                    Duration="0:0:1">
+                                    <DoubleAnimation.To>
+                                        <MultiBinding Converter="{converters:RelativityCoordinateMultiConverter}">
+                                            <Binding Path="X" />
+                                            <Binding Path="DataContext.Width" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}" />
+                                            <Binding Path="ActualWidth" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}" />
+                                        </MultiBinding>
+                                    </DoubleAnimation.To>
+                                </DoubleAnimation>
+                            </Storyboard>
+
+                        </Ellipse.Resources>
+
+                        <i:Interaction.Triggers>
+                            <ei:PropertyChangedTrigger Binding="{Binding X}">
+                                <ei:ControlStoryboardAction Storyboard="{StaticResource xanimation}" />
+                            </ei:PropertyChangedTrigger>
+                            <ei:PropertyChangedTrigger Binding="{Binding Y}">
+                                <ei:ControlStoryboardAction Storyboard="{StaticResource yanimation}" />
+                            </ei:PropertyChangedTrigger>
+                        </i:Interaction.Triggers>
+
+                        <Ellipse.Triggers>
+                            <EventTrigger RoutedEvent="Ellipse.Loaded">
+                                <BeginStoryboard Storyboard="{StaticResource xanimation}" />
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="Ellipse.Loaded">
+                                <BeginStoryboard Storyboard="{StaticResource yanimation}" />
+                            </EventTrigger>
+                        </Ellipse.Triggers>
+                    </Ellipse>
+
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <StackPanel 
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Orientation="Horizontal">
+            
+            <RepeatButton Content="Add" Command="{Binding AddBubbleCommand}"  />
+            <RepeatButton Content="Remode" Command="{Binding RemoveBubbleCommand}" />
+        
+        </StackPanel>
+    </Grid>
+</Window>
