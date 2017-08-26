@@ -35,7 +35,8 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Ellipse
-                        Canvas.Top="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentPresenter}, Path=(Canvas.Top), Mode=TwoWay}"
+                        Canvas.Left="{Binding (Canvas.Left), RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentPresenter}}"
+                        Canvas.Top="{Binding (Canvas.Top), RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentPresenter}}"
                         Width="10"
                         Height="10"
                         Fill="#FF616AB6">
@@ -96,14 +97,14 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <StackPanel 
+        <StackPanel
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
             Orientation="Horizontal">
-            
-            <RepeatButton Content="Add" Command="{Binding AddBubbleCommand}"  />
-            <RepeatButton Content="Remode" Command="{Binding RemoveBubbleCommand}" />
-        
+
+            <RepeatButton Command="{Binding AddBubbleCommand}" Content="Add" />
+            <RepeatButton Command="{Binding RemoveBubbleCommand}" Content="Remove" />
+
         </StackPanel>
     </Grid>
 </Window>
